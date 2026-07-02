@@ -1,5 +1,4 @@
-import type { Sport } from "./domain/index.js";
-import { ApiEndpoint, fetchApi } from "./services/index.js";
+import { loadDataset } from "./services/index.js";
 import { renderApp, renderError } from "./ui/render-app.js";
 
 async function bootstrap(): Promise<void> {
@@ -10,8 +9,8 @@ async function bootstrap(): Promise<void> {
   }
 
   try {
-    const sports = await fetchApi<Sport[]>(ApiEndpoint.SPORTS);
-    renderApp(root, sports);
+    const dataset = await loadDataset();
+    renderApp(root, dataset);
   } catch (error) {
     const message =
       error instanceof Error
