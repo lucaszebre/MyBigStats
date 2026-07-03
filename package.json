@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "npm run build && npx http-server . -c-1"
+    "start": "npm run build && npx http-server . -c-1 -p 4000"
   },
   "devDependencies": {
     "http-server": "^14.1.1",
