@@ -1,5 +1,5 @@
 import { loadDataset } from "./services/index.js";
-import { renderApp, renderError } from "./ui/render-app.js";
+import { renderApp, renderError, renderLoading } from "./ui/render-app.js";
 
 async function bootstrap(): Promise<void> {
   const root = document.querySelector<HTMLElement>("#app");
@@ -7,6 +7,8 @@ async function bootstrap(): Promise<void> {
   if (!root) {
     throw new Error("Missing #app root element");
   }
+
+  renderLoading(root);
 
   try {
     const dataset = await loadDataset();
