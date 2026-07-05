@@ -11,6 +11,9 @@ async function bootstrap(): Promise<void> {
   try {
     const dataset = await loadDataset();
     renderApp(root, dataset);
+    window.addEventListener("hashchange", () => {
+      renderApp(root, dataset);
+    });
   } catch (error) {
     const message =
       error instanceof Error
