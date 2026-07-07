@@ -1,7 +1,7 @@
 import type { Equipe } from "./equipe.js";
 import type { Sport } from "../sports/sport.js";
 import { getEquipeDetailRows } from "./team-helpers.js";
-import { escapeHtml } from "../athletes/athlete-helpers.js";
+import { escapeHtml } from "../platform/html.js";
 
 export function renderEquipeSection(equipes: Equipe[], sport: Sport): string {
   const sortedEquipes = [...equipes].sort((left, right) => {

@@ -1,7 +1,7 @@
 import type { Rencontre } from "./rencontre.js";
 import type { Dataset } from "../platform/data-store.js";
 import { formatDate } from "../platform/format.js";
-import { escapeHtml } from "../athletes/athlete-helpers.js";
+import { escapeHtml } from "../platform/html.js";
 
 export function renderRencontreCard(rencontre: Rencontre, dataset: Dataset): string {
   const sport = dataset.sportsById.get(rencontre.sport_id);

@@ -8,7 +8,8 @@ import { renderAthleteCard } from "../athletes/athlete-card.js";
 import { renderEquipeSection } from "../teams/team-card.js";
 import { renderRencontreCard } from "../matches/event-card.js";
 import { renderComparisonPanel, compareAthletes } from "../comparison/comparison-panel.js";
-import { escapeHtml, getAthleteRole } from "../athletes/athlete-helpers.js";
+import { getAthleteRole } from "../athletes/athlete-helpers.js";
+import { escapeHtml } from "../platform/html.js";
 import { getPastRencontresForSport, getUpcomingRencontresForSport } from "../matches/match-utils.js";
 import { isMmaSport } from "./sport-utils.js";
 
