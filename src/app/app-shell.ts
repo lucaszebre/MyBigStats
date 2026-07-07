@@ -1,7 +1,7 @@
-import type { Dataset } from "../services/index.js";
-import { renderHomePage } from "./pages/home-page.js";
-import { renderSportPage, initSportPage } from "./pages/sport-page.js";
-import { escapeHtml } from "./cards/helpers.js";
+import type { Dataset } from "../platform/data-store.js";
+import { renderHomePage } from "../home/home-page.js";
+import { renderSportPage, initSportPage } from "../sports/sport-page.js";
+import { escapeHtml } from "../athletes/athlete-helpers.js";
 
 function resolveRouteFromHash(hash = window.location.hash): { view: "home" } | { view: "sport"; sportId: number } {
   const cleanHash = hash.startsWith("#") ? hash.slice(1) : hash;

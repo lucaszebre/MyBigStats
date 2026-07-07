@@ -1,6 +1,6 @@
-import type { Athlete, Rencontre, Sport } from "../../domain/index.js";
-import type { Dataset } from "../../services/index.js";
-import { getAthleteRole, getTodayString } from "../cards/helpers.js";
+import type { Rencontre } from "./rencontre.js";
+import type { Dataset } from "../platform/data-store.js";
+import { getTodayString } from "../platform/format.js";
 
 export function getUpcomingRencontres(dataset: Dataset): Rencontre[] {
   return dataset.rencontres
@@ -19,9 +19,3 @@ export function getPastRencontresForSport(rencontres: Rencontre[]): Rencontre[] 
     .filter((rencontre) => rencontre.date < getTodayString())
     .sort((a, b) => b.date.localeCompare(a.date));
 }
-
-export function isMmaSport(sport: Sport): boolean {
-  return sport.name.toLowerCase().includes("mma") || sport.name.toLowerCase().includes("combat");
-}
-
-export { getAthleteRole };

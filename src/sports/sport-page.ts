@@ -1,20 +1,16 @@
-import type { Dataset } from "../../services/index.js";
-import type { Athlete, Equipe, Rencontre, Sport } from "../../domain/index.js";
-import {
-  renderStatCard,
-  renderAthleteCard,
-  renderEquipeSection,
-  renderRencontreCard,
-  renderComparisonPanel,
-  compareAthletes,
-} from "../cards/index.js";
-import {
-  getAthleteRole,
-  getPastRencontresForSport,
-  getUpcomingRencontresForSport,
-  isMmaSport,
-} from "./page-utils.js";
-import { escapeHtml } from "../cards/helpers.js";
+import type { Dataset } from "../platform/data-store.js";
+import type { Athlete } from "../athletes/athlete.js";
+import type { Equipe } from "../teams/equipe.js";
+import type { Rencontre } from "../matches/rencontre.js";
+import type { Sport } from "./sport.js";
+import { renderStatCard } from "../platform/stat-card.js";
+import { renderAthleteCard } from "../athletes/athlete-card.js";
+import { renderEquipeSection } from "../teams/team-card.js";
+import { renderRencontreCard } from "../matches/event-card.js";
+import { renderComparisonPanel, compareAthletes } from "../comparison/comparison-panel.js";
+import { escapeHtml, getAthleteRole } from "../athletes/athlete-helpers.js";
+import { getPastRencontresForSport, getUpcomingRencontresForSport } from "../matches/match-utils.js";
+import { isMmaSport } from "./sport-utils.js";
 
 export function renderSportPage(dataset: Dataset, sportId: number): string {
   const sport = dataset.sportsById.get(sportId);

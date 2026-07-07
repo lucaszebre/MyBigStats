@@ -1,6 +1,7 @@
-import type { Athlete, Sport } from "../../domain/index.js";
-import type { Dataset } from "../../services/index.js";
-import { escapeHtml } from "./helpers.js";
+import type { Athlete } from "../athletes/athlete.js";
+import type { Sport } from "../sports/sport.js";
+import type { Dataset } from "../platform/data-store.js";
+import { escapeHtml } from "../athletes/athlete-helpers.js";
 
 export type ComparisonError = "MISSING_ATHLETE" | "DIFFERENT_SPORTS";
 

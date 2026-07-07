@@ -1,4 +1,7 @@
-import type { Athlete, Equipe, Rencontre, Sport } from "../domain/index.js";
+import type { Athlete } from "../athletes/athlete.js";
+import type { Equipe } from "../teams/equipe.js";
+import type { Rencontre } from "../matches/rencontre.js";
+import type { Sport } from "../sports/sport.js";
 import { ApiEndpoint, fetchApi } from "./api-service.js";
 
 export function fetchSports(): Promise<Sport[]> {

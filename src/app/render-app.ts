@@ -1,4 +1,4 @@
-import type { Dataset } from "../services/index.js";
+import type { Dataset } from "../platform/data-store.js";
 import {
   renderApp as renderAppShell,
   renderError as renderErrorShell,

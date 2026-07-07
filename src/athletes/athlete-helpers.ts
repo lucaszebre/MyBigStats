@@ -1,18 +1,4 @@
-import type { Athlete, Equipe, Rencontre, Sport } from "../../domain/index.js";
-import type { Dataset } from "../../services/index.js";
-
-export function formatDate(date: string): string {
-  const parsed = new Date(date);
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(parsed);
-}
-
-export function getTodayString(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import type { Athlete } from "./athlete.js";
 
 const HTML_ESCAPE_MAP: Record<string, string> = {
   "&": "&amp;",
@@ -52,14 +38,6 @@ export function getAthleteStatsSummary(athlete: Athlete): string {
   }
 
   return "Statistiques disponibles";
-}
-
-export function getEquipeContext(equipe: Equipe): string {
-  if ("country" in equipe) {
-    return `${equipe.country} · ${equipe.confederation}`;
-  }
-
-  return `${equipe.city} · ${equipe.conference}`;
 }
 
 export function getAthleteDetailRows(athlete: Athlete): Array<{ label: string; value: string }> {
@@ -113,49 +91,4 @@ export function getAthleteDetailRows(athlete: Athlete): Array<{ label: string; v
   }
 
   return rows;
-}
-
-export function getEquipeDetailRows(equipe: Equipe): Array<{ label: string; value: string }> {
-  if ("country" in equipe) {
-    return [
-      { label: "Pays", value: equipe.country },
-      { label: "Confédération", value: equipe.confederation },
-      { label: "Classement FIFA", value: `#${equipe.fifa_ranking}` },
-      { label: "Titres Mondiaux", value: String(equipe.world_cup_titles) },
-      { label: "Apparitions", value: String(equipe.world_cup_appearances) },
-      { label: "Groupe", value: equipe.group },
-    ];
-  }
-
-  return [
-    { label: "Ville", value: equipe.city },
-    { label: "Conférence", value: equipe.conference },
-    { label: "Seed", value: `#${equipe.seed}` },
-    { label: "V/D", value: `${equipe.regular_season_wins}-${equipe.regular_season_losses}` },
-    { label: "Titres", value: String(equipe.championships) },
-    { label: "Arène", value: equipe.arena },
-  ];
-}
-
-export function getRencontreTitle(rencontre: Rencontre, dataset: Dataset): string {
-  if (rencontre.type === "match") {
-    const home = dataset.equipesById.get(rencontre.home_team_id)?.name ?? "Équipe locale";
-    const away = dataset.equipesById.get(rencontre.away_team_id)?.name ?? "Équipe visiteuse";
-    return `${home} vs ${away}`;
-  }
-
-  const fighter1 = dataset.athletesById.get(rencontre.fighter1_id)?.first_name ?? "Combatant 1";
-  const fighter2 = dataset.athletesById.get(rencontre.fighter2_id)?.first_name ?? "Combatant 2";
-  return `${fighter1} vs ${fighter2}`;
-}
-
-export function getRencontreSubtitle(rencontre: Rencontre, dataset: Dataset): string {
-  if (rencontre.type === "match") {
-    return rencontre.status === "finished"
-      ? `${rencontre.home_score} - ${rencontre.away_score} · ${rencontre.venue}`
-      : `Lieu : ${rencontre.venue}`;
-  }
-
-  const winner = dataset.athletesById.get(rencontre.winner_id);
-  return winner ? `Vainqueur : ${winner.first_name} ${winner.last_name}` : `Catégorie : ${rencontre.weight_class}`;
 }
