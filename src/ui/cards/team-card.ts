@@ -1,5 +1,5 @@
 import type { Equipe, Sport } from "../../domain/index.js";
-import { getEquipeDetailRows } from "./helpers.js";
+import { escapeHtml, getEquipeDetailRows } from "./helpers.js";
 
 export function renderEquipeSection(equipes: Equipe[], sport: Sport): string {
   const sortedEquipes = [...equipes].sort((left, right) => {
@@ -17,12 +17,14 @@ export function renderEquipeSection(equipes: Equipe[], sport: Sport): string {
   const renderEquipeAccordion = (equipe: Equipe): string => {
     const detailRows = getEquipeDetailRows(equipe);
     const detailMarkup = detailRows
-      .map((row) => `<li class="accordion-stat"><span>${row.label}</span><strong>${row.value}</strong></li>`)
+      .map((row) => `<li class="accordion-stat"><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(row.value)}</strong></li>`)
       .join("");
 
-    const summaryMeta = "country" in equipe
-      ? `${equipe.country} · ${equipe.confederation}`
-      : `${equipe.city} · ${equipe.conference}`;
+    const summaryMeta = escapeHtml(
+      "country" in equipe
+        ? `${equipe.country} · ${equipe.confederation}`
+        : `${equipe.city} · ${equipe.conference}`,
+    );
 
     const badge = "fifa_ranking" in equipe
       ? `#${equipe.fifa_ranking}`
@@ -35,7 +37,7 @@ export function renderEquipeSection(equipes: Equipe[], sport: Sport): string {
             <div class="card-header">
               <div>
                 <p class="eyebrow">${summaryMeta}</p>
-                <h3>${equipe.name}</h3>
+                <h3>${escapeHtml(equipe.name)}</h3>
               </div>
               <span class="pill">${badge}</span>
             </div>

@@ -1,6 +1,7 @@
 import type { Dataset } from "../services/index.js";
 import { renderHomePage } from "./pages/home-page.js";
 import { renderSportPage, initSportPage } from "./pages/sport-page.js";
+import { escapeHtml } from "./cards/helpers.js";
 
 function resolveRouteFromHash(hash = window.location.hash): { view: "home" } | { view: "sport"; sportId: number } {
   const cleanHash = hash.startsWith("#") ? hash.slice(1) : hash;
@@ -44,7 +45,7 @@ export function renderApp(root: HTMLElement, dataset: Dataset): void {
         <nav class="nav" aria-label="Navigation principale">
           <button type="button" class="${route.view === "home" ? "active" : ""}" data-route="home">Accueil</button>
           ${dataset.sports
-            .map((sport) => `<button type="button" class="${route.view === "sport" && route.sportId === sport.id ? "active" : ""}" data-route="sport" data-sport-id="${sport.id}">${sport.name}</button>`)
+            .map((sport) => `<button type="button" class="${route.view === "sport" && route.sportId === sport.id ? "active" : ""}" data-route="sport" data-sport-id="${sport.id}">${escapeHtml(sport.name)}</button>`)
             .join("")}
         </nav>
       </header>
@@ -63,8 +64,6 @@ export function renderApp(root: HTMLElement, dataset: Dataset): void {
       } else {
         window.location.hash = "home";
       }
-
-      renderApp(root, dataset);
     });
   });
 

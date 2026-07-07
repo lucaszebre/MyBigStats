@@ -13,6 +13,7 @@ import {
   getUpcomingRencontresForSport,
   isMmaSport,
 } from "./page-utils.js";
+import { escapeHtml } from "../cards/helpers.js";
 
 export function renderSportPage(dataset: Dataset, sportId: number): string {
   const sport = dataset.sportsById.get(sportId);
@@ -48,9 +49,10 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
   const upcomingCards = upcoming.map((rencontre) => renderRencontreCard(rencontre, dataset)).join("");
   const teamMarkup = isMma ? "" : renderEquipeSection(equipes, sport);
 
-  const comparisonOptions = athletes
-    .map((athlete) => `<option value="${athlete.id}" ${athlete.id === athletes[0]?.id ? "selected" : ""}>${athlete.first_name} ${athlete.last_name}</option>`)
-    .join("");
+  const buildAthleteOptions = (selectedId?: number) =>
+    athletes
+      .map((athlete) => `<option value="${athlete.id}" ${athlete.id === selectedId ? "selected" : ""}>${escapeHtml(`${athlete.first_name} ${athlete.last_name}`)}</option>`)
+      .join("");
 
   const comparisonMarkup = athletes.length >= 2
     ? `
@@ -58,13 +60,13 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
         <label>
           <span>Premier athlète</span>
           <select data-athlete-select="primary">
-            ${comparisonOptions}
+            ${buildAthleteOptions(athletes[0]?.id)}
           </select>
         </label>
         <label>
           <span>Deuxième athlète</span>
           <select data-athlete-select="secondary">
-            ${comparisonOptions.replace(/selected/g, "")}
+            ${buildAthleteOptions(athletes[1]?.id ?? athletes[0]?.id)}
           </select>
         </label>
       </div>
@@ -77,8 +79,8 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
       <section class="panel sport-hero">
         <div>
           <p class="eyebrow">${sport.type === "team" ? "Sport collectif" : "Sport individuel"}</p>
-          <h2>${sport.name}</h2>
-          <p>${sport.competition.name} · ${sport.governing_body}</p>
+          <h2>${escapeHtml(sport.name)}</h2>
+          <p>${escapeHtml(sport.competition.name)} · ${escapeHtml(sport.governing_body)}</p>
         </div>
         <div class="grid summary-grid">
           ${renderStatCard("Participants", String(athletes.length), "athlètes référencés")}
@@ -229,6 +231,12 @@ function getShortAthleteName(athlete: Athlete) {
   return `${athlete.first_name} ${last.length > 8 ? last[0] + "." : last}`;
 }
 
+interface EchartsInstance {
+  setOption: (options: unknown) => void;
+  resize: () => void;
+  dispose: () => void;
+}
+
 export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: number): void {
   const context = getSportContext(dataset, sportId);
   if (!context) {
@@ -246,6 +254,7 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
   const athleteRoleFilter = root.querySelector<HTMLSelectElement>("[data-athlete-role-filter]");
   const athleteCards = Array.from(root.querySelectorAll<HTMLElement>("[data-athlete-card]"));
   const athleteEmpty = root.querySelector<HTMLElement>("[data-athlete-empty]");
+  let currentChart: EchartsInstance | null = null;
 
   const setActiveTab = (tabName: string): void => {
     tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === tabName));
@@ -297,6 +306,9 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
 
     comparisonPanel.innerHTML = renderComparisonPanel(dataset, sport, primaryId, secondaryId);
 
+    currentChart?.dispose();
+    currentChart = null;
+
     if (!primary || !secondary) {
       return;
     }
@@ -316,7 +328,7 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
     const s1 = getShortAthleteName(primary);
     const s2 = getShortAthleteName(secondary);
 
-    const chart = (window as Window & { echarts?: { init: (element: HTMLElement) => { setOption: (options: unknown) => void; resize: () => void } } }).echarts?.init(chartContainer);
+    const chart = (window as Window & { echarts?: { init: (element: HTMLElement) => EchartsInstance } }).echarts?.init(chartContainer);
     if (!chart) {
       comparisonPanel.innerHTML = '<p class="empty-state">Le graphique radar est indisponible dans cette configuration.</p>';
       return;
@@ -352,8 +364,10 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
       ],
     });
 
-    window.addEventListener('resize', () => chart.resize(), { once: false });
+    currentChart = chart;
   };
+
+  window.addEventListener('resize', () => currentChart?.resize());
 
   athleteSearch?.addEventListener("input", refreshAthleteList);
   athleteRoleFilter?.addEventListener("change", refreshAthleteList);

@@ -1,6 +1,6 @@
 import type { Sport } from "../../domain/index.js";
 import type { Dataset } from "../../services/index.js";
-import { getTodayString } from "./helpers.js";
+import { escapeHtml, getTodayString } from "./helpers.js";
 
 export function renderSportCard(sport: Sport, dataset: Dataset): string {
   const athletesCount = dataset.athletes.filter((athlete) => athlete.sport_id === sport.id).length;
@@ -14,10 +14,10 @@ export function renderSportCard(sport: Sport, dataset: Dataset): string {
       <div class="card-header sport-card-header">
         <div class="card-title-block">
           <p class="eyebrow">${sport.type === "team" ? "Équipe" : "Individuel"}</p>
-          <h3>${sport.name}</h3>
+          <h3>${escapeHtml(sport.name)}</h3>
         </div>
       </div>
-      <p class="sport-card-subtitle">${sport.competition.name}</p>
+      <p class="sport-card-subtitle">${escapeHtml(sport.competition.name)}</p>
       <ul class="inline-list">
         <li>${athletesCount} athlètes</li>
         <li>${teamsCount} équipes</li>
