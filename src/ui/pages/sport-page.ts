@@ -6,6 +6,7 @@ import {
   renderEquipeSection,
   renderRencontreCard,
   renderComparisonPanel,
+  compareAthletes,
 } from "../cards/index.js";
 import {
   getAthleteRole,
@@ -301,17 +302,18 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
 
     const primaryId = Number(athletePrimary.value);
     const secondaryId = Number(athleteSecondary.value);
-    const primary = dataset.athletesById.get(primaryId);
-    const secondary = dataset.athletesById.get(secondaryId);
 
     comparisonPanel.innerHTML = renderComparisonPanel(dataset, sport, primaryId, secondaryId);
 
     currentChart?.dispose();
     currentChart = null;
 
-    if (!primary || !secondary) {
+    const comparison = compareAthletes(dataset, primaryId, secondaryId);
+    if (!comparison.ok) {
       return;
     }
+
+    const { primary, secondary } = comparison;
 
     const chartContainer = comparisonPanel.querySelector<HTMLElement>('[data-comparison-chart]');
     if (!chartContainer) {
