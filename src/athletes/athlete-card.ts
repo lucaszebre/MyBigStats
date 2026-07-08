@@ -1,6 +1,7 @@
-import type { Athlete } from "../../domain/index.js";
-import type { Dataset } from "../../services/index.js";
-import { escapeHtml, getAthleteDetailRows, getAthleteRole, getAthleteStatsSummary } from "./helpers.js";
+import type { Athlete } from "./athlete.js";
+import type { Dataset } from "../platform/data-store.js";
+import { getAthleteDetailRows, getAthleteRole, getAthleteStatsSummary } from "./athlete-helpers.js";
+import { escapeHtml } from "../platform/html.js";
 
 export function renderAthleteCard(athlete: Athlete, dataset: Dataset): string {
   const team = athlete.team_id ? dataset.equipesById.get(athlete.team_id) : undefined;
