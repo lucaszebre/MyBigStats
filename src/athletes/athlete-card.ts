@@ -2,6 +2,7 @@ import type { Athlete } from "./athlete.js";
 import type { Dataset } from "../platform/data-store.js";
 import { getAthleteDetailRows, getAthleteRole, getAthleteStatsSummary } from "./athlete-helpers.js";
 import { escapeHtml } from "../platform/html.js";
+import { isFavorite } from "../platform/preferences.js";
 
 export function renderAthleteCard(athlete: Athlete, dataset: Dataset): string {
   const team = athlete.team_id ? dataset.equipesById.get(athlete.team_id) : undefined;
@@ -9,6 +10,7 @@ export function renderAthleteCard(athlete: Athlete, dataset: Dataset): string {
   const athleteRole = escapeHtml(getAthleteRole(athlete));
   const athleteName = escapeHtml(`${athlete.first_name} ${athlete.last_name}`);
   const athleteNationality = escapeHtml(athlete.nationality);
+  const favorite = isFavorite(athlete.id);
   const detailRows = getAthleteDetailRows(athlete);
   const detailMarkup = detailRows
     .map((row) => `<li class="accordion-stat"><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(row.value)}</strong></li>`)
@@ -23,7 +25,18 @@ export function renderAthleteCard(athlete: Athlete, dataset: Dataset): string {
               <p class="eyebrow">${teamName}</p>
               <h3>${athleteName}</h3>
             </div>
-            <span class="pill">${athleteNationality}</span>
+            <div class="card-header-actions">
+              <span class="pill">${athleteNationality}</span>
+              <button
+                type="button"
+                class="favorite-toggle ${favorite ? "is-favorite" : ""}"
+                data-favorite-toggle
+                data-athlete-id="${athlete.id}"
+                aria-pressed="${favorite}"
+                aria-label="Ajouter ${athleteName} aux favoris"
+                title="Ajouter aux favoris"
+              >★</button>
+            </div>
           </div>
           <p>${athleteRole}</p>
           <ul class="inline-list">

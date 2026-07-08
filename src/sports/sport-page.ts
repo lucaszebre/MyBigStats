@@ -257,6 +257,12 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
   const setActiveTab = (tabName: string): void => {
     tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === tabName));
     tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.tabPanel === tabName));
+
+    // The radar chart is initialised while the stats panel is hidden (0 height),
+    // so ECharts must be resized once the panel becomes visible.
+    if (tabName === "stats") {
+      currentChart?.resize();
+    }
   };
 
   tabButtons.forEach((button) => {
@@ -333,6 +339,13 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
       return;
     }
 
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const legendColor = isLight ? '#334155' : '#e2e8f0';
+    const axisNameColor = isLight ? '#475569' : '#cbd5e1';
+    const splitAreaColors = isLight
+      ? ['rgba(56,189,248,0.08)', 'rgba(226,232,240,0.35)']
+      : ['rgba(56,189,248,0.06)', 'rgba(15,23,42,0.28)'];
+
     chart.setOption({
       tooltip: { trigger: 'item' },
       legend: {
@@ -341,20 +354,20 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
         orient: 'horizontal',
         itemGap: 12,
         data: [s1, s2],
-        textStyle: { color: '#e2e8f0' },
+        textStyle: { color: legendColor },
       },
       radar: {
         center: ['50%', '44%'],
         indicator: indicators,
         radius: '55%',
-        splitArea: { areaStyle: { color: ['rgba(56,189,248,0.06)', 'rgba(15,23,42,0.28)'] } },
-        axisName: { color: '#cbd5e1' },
+        splitArea: { areaStyle: { color: splitAreaColors } },
+        axisName: { color: axisNameColor },
         splitLine: { lineStyle: { color: 'rgba(148,163,184,0.12)' } },
       },
       series: [
         {
           type: 'radar',
-          label: { show: true, color: '#e2e8f0', formatter: '{c}' },
+          label: { show: true, color: legendColor, formatter: '{c}' },
           data: [
             { value: primaryMetrics.map((m) => m.value), name: s1, areaStyle: { color: 'rgba(56,189,248,0.25)' }, lineStyle: { color: '#38bdf8' } },
             { value: secondaryMetrics.map((m) => m.value), name: s2, areaStyle: { color: 'rgba(248,113,113,0.2)' }, lineStyle: { color: '#f87171' } },

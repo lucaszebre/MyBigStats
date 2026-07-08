@@ -1,4 +1,5 @@
 import { loadDataset } from "./platform/data-store.js";
+import { applyTheme } from "./platform/preferences.js";
 import { renderApp, renderError, renderLoading } from "./app/render-app.js";
 
 async function bootstrap(): Promise<void> {
@@ -8,6 +9,7 @@ async function bootstrap(): Promise<void> {
     throw new Error("Missing #app root element");
   }
 
+  applyTheme();
   renderLoading(root);
 
   try {
