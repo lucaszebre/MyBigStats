@@ -1,6 +1,7 @@
-import type { Sport } from "../../domain/index.js";
-import type { Dataset } from "../../services/index.js";
-import { escapeHtml, getTodayString } from "./helpers.js";
+import type { Sport } from "./sport.js";
+import type { Dataset } from "../platform/data-store.js";
+import { getTodayString } from "../platform/format.js";
+import { escapeHtml } from "../platform/html.js";
 
 export function renderSportCard(sport: Sport, dataset: Dataset): string {
   const athletesCount = dataset.athletes.filter((athlete) => athlete.sport_id === sport.id).length;

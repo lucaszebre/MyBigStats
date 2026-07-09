@@ -1,6 +1,8 @@
-import type { Dataset } from "../../services/index.js";
-import { renderStatCard, renderSportCard, renderRencontreCard } from "../cards/index.js";
-import { getUpcomingRencontres } from "./page-utils.js";
+import type { Dataset } from "../platform/data-store.js";
+import { renderStatCard } from "../platform/stat-card.js";
+import { renderSportCard } from "../sports/sport-card.js";
+import { renderRencontreCard } from "../matches/event-card.js";
+import { getUpcomingRencontres } from "../matches/match-utils.js";
 
 export function renderHomePage(dataset: Dataset): string {
   const summaryCards = [

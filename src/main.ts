@@ -1,5 +1,5 @@
-import { loadDataset } from "./services/index.js";
-import { renderApp, renderError, renderLoading } from "./ui/render-app.js";
+import { loadDataset } from "./platform/data-store.js";
+import { renderApp, renderError, renderLoading } from "./app/render-app.js";
 
 async function bootstrap(): Promise<void> {
   const root = document.querySelector<HTMLElement>("#app");

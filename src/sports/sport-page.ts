@@ -1,19 +1,17 @@
-import type { Dataset } from "../../services/index.js";
-import type { Athlete, Equipe, Rencontre, Sport } from "../../domain/index.js";
-import {
-  renderStatCard,
-  renderAthleteCard,
-  renderEquipeSection,
-  renderRencontreCard,
-  renderComparisonPanel,
-} from "../cards/index.js";
-import {
-  getAthleteRole,
-  getPastRencontresForSport,
-  getUpcomingRencontresForSport,
-  isMmaSport,
-} from "./page-utils.js";
-import { escapeHtml } from "../cards/helpers.js";
+import type { Dataset } from "../platform/data-store.js";
+import type { Athlete } from "../athletes/athlete.js";
+import type { Equipe } from "../teams/equipe.js";
+import type { Rencontre } from "../matches/rencontre.js";
+import type { Sport } from "./sport.js";
+import { renderStatCard } from "../platform/stat-card.js";
+import { renderAthleteCard } from "../athletes/athlete-card.js";
+import { renderEquipeSection } from "../teams/team-card.js";
+import { renderRencontreCard } from "../matches/event-card.js";
+import { renderComparisonPanel, compareAthletes } from "../comparison/comparison-panel.js";
+import { getAthleteRole } from "../athletes/athlete-helpers.js";
+import { escapeHtml } from "../platform/html.js";
+import { getPastRencontresForSport, getUpcomingRencontresForSport } from "../matches/match-utils.js";
+import { isMmaSport } from "./sport-utils.js";
 
 export function renderSportPage(dataset: Dataset, sportId: number): string {
   const sport = dataset.sportsById.get(sportId);
@@ -301,17 +299,18 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
 
     const primaryId = Number(athletePrimary.value);
     const secondaryId = Number(athleteSecondary.value);
-    const primary = dataset.athletesById.get(primaryId);
-    const secondary = dataset.athletesById.get(secondaryId);
 
     comparisonPanel.innerHTML = renderComparisonPanel(dataset, sport, primaryId, secondaryId);
 
     currentChart?.dispose();
     currentChart = null;
 
-    if (!primary || !secondary) {
+    const comparison = compareAthletes(dataset, primaryId, secondaryId);
+    if (!comparison.ok) {
       return;
     }
+
+    const { primary, secondary } = comparison;
 
     const chartContainer = comparisonPanel.querySelector<HTMLElement>('[data-comparison-chart]');
     if (!chartContainer) {
