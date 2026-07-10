@@ -1,4 +1,16 @@
-export type Theme = "dark" | "light";
+import type { ObjectValues } from "./types.js";
+
+export const Theme = {
+  DARK: "dark",
+  LIGHT: "light",
+} as const;
+
+export type Theme = ObjectValues<typeof Theme>;
+
+export type Preferences = {
+  theme: Theme;
+  favorites: number[];
+};
 
 const THEME_KEY = "mybigstats:theme";
 const FAVORITES_KEY = "mybigstats:favorites";
@@ -20,20 +32,29 @@ function safeSetItem(key: string, value: string): void {
 }
 
 export function getTheme(): Theme {
-  return safeGetItem(THEME_KEY) === "light" ? "light" : "dark";
+  return safeGetItem(THEME_KEY) === Theme.LIGHT ? Theme.LIGHT : Theme.DARK;
 }
 
 export function applyTheme(theme: Theme = getTheme()): void {
   document.documentElement.setAttribute("data-theme", theme);
 }
 
+export function updatePreferences(patch: Partial<Preferences>): void {
+  if (patch.theme !== undefined) {
+    safeSetItem(THEME_KEY, patch.theme);
+  }
+  if (patch.favorites !== undefined) {
+    safeSetItem(FAVORITES_KEY, JSON.stringify(patch.favorites));
+  }
+}
+
 export function setTheme(theme: Theme): void {
-  safeSetItem(THEME_KEY, theme);
+  updatePreferences({ theme });
   applyTheme(theme);
 }
 
 export function toggleTheme(): Theme {
-  const next: Theme = getTheme() === "dark" ? "light" : "dark";
+  const next: Theme = getTheme() === Theme.DARK ? Theme.LIGHT : Theme.DARK;
   setTheme(next);
   return next;
 }
@@ -57,7 +78,7 @@ export function getFavorites(): Set<number> {
 }
 
 function saveFavorites(favorites: Set<number>): void {
-  safeSetItem(FAVORITES_KEY, JSON.stringify(Array.from(favorites)));
+  updatePreferences({ favorites: Array.from(favorites) });
 }
 
 export function isFavorite(athleteId: number): boolean {

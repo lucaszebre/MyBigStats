@@ -1,13 +1,12 @@
 import type { Dataset } from "../platform/data-store.js";
-import type { Theme } from "../platform/preferences.js";
-import { getTheme, toggleTheme } from "../platform/preferences.js";
+import { getTheme, toggleTheme, Theme } from "../platform/preferences.js";
 import { renderHomePage } from "../home/home-page.js";
 import { renderSportPage, initSportPage } from "../sports/sport-page.js";
 import { escapeHtml } from "../platform/html.js";
 import { wireFavorites } from "./favorites.js";
 
 function getThemeToggleLabel(theme: Theme): string {
-  return theme === "dark" ? "☀️ Mode clair" : "🌙 Mode sombre";
+  return theme === Theme.DARK ? "☀️ Mode clair" : "🌙 Mode sombre";
 }
 
 function resolveRouteFromHash(hash = window.location.hash): { view: "home" } | { view: "sport"; sportId: number } {

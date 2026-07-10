@@ -3,6 +3,9 @@ import type { Athlete } from "../athletes/athlete.js";
 import type { Equipe } from "../teams/equipe.js";
 import type { Rencontre } from "../matches/rencontre.js";
 import type { Sport } from "./sport.js";
+import { SportType } from "./sport.js";
+import { Theme } from "../platform/preferences.js";
+import type { ObjectValues } from "../platform/types.js";
 import { renderStatCard } from "../platform/stat-card.js";
 import { renderAthleteCard } from "../athletes/athlete-card.js";
 import { renderEquipeSection } from "../teams/team-card.js";
@@ -12,6 +15,16 @@ import { getAthleteRole } from "../athletes/athlete-helpers.js";
 import { escapeHtml } from "../platform/html.js";
 import { getPastRencontresForSport, getUpcomingRencontresForSport } from "../matches/match-utils.js";
 import { isMmaSport } from "./sport-utils.js";
+
+const SportTab = {
+  HISTORY: "history",
+  TEAMS: "teams",
+  PLAYERS: "players",
+  STATS: "stats",
+  UPCOMING: "upcoming",
+} as const;
+
+type SportTab = ObjectValues<typeof SportTab>;
 
 export function renderSportPage(dataset: Dataset, sportId: number): string {
   const sport = dataset.sportsById.get(sportId);
@@ -76,7 +89,7 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
     <section class="stack">
       <section class="panel sport-hero">
         <div>
-          <p class="eyebrow">${sport.type === "team" ? "Sport collectif" : "Sport individuel"}</p>
+          <p class="eyebrow">${sport.type === SportType.TEAM ? "Sport collectif" : "Sport individuel"}</p>
           <h2>${escapeHtml(sport.name)}</h2>
           <p>${escapeHtml(sport.competition.name)} · ${escapeHtml(sport.governing_body)}</p>
         </div>
@@ -96,14 +109,14 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
           </div>
         </div>
         <div class="tabs" role="tablist">
-          <button type="button" class="tab-button active" data-tab="history">Historique</button>
-          <button type="button" class="tab-button" data-tab="teams">Équipes</button>
-          <button type="button" class="tab-button" data-tab="players">${isMma ? "Combattants" : "Joueurs"}</button>
-          <button type="button" class="tab-button" data-tab="stats">Stats</button>
-          <button type="button" class="tab-button" data-tab="upcoming">À venir</button>
+          <button type="button" class="tab-button active" data-tab="${SportTab.HISTORY}">Historique</button>
+          <button type="button" class="tab-button" data-tab="${SportTab.TEAMS}">Équipes</button>
+          <button type="button" class="tab-button" data-tab="${SportTab.PLAYERS}">${isMma ? "Combattants" : "Joueurs"}</button>
+          <button type="button" class="tab-button" data-tab="${SportTab.STATS}">Stats</button>
+          <button type="button" class="tab-button" data-tab="${SportTab.UPCOMING}">À venir</button>
         </div>
 
-        <div class="tab-panel active" data-tab-panel="history">
+        <div class="tab-panel active" data-tab-panel="${SportTab.HISTORY}">
           <div class="section-title">
             <div>
               <p class="eyebrow">Historique</p>
@@ -113,7 +126,7 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
           <div class="stack">${historicalCards || '<p class="empty-state">Aucun historique disponible.</p>'}</div>
         </div>
 
-        <div class="tab-panel" data-tab-panel="teams">
+        <div class="tab-panel" data-tab-panel="${SportTab.TEAMS}">
           <div class="section-title">
             <div>
               <p class="eyebrow">Équipes</p>
@@ -123,7 +136,7 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
           ${teamMarkup || '<p class="empty-state">Aucune équipe disponible.</p>'}
         </div>
 
-        <div class="tab-panel" data-tab-panel="players">
+        <div class="tab-panel" data-tab-panel="${SportTab.PLAYERS}">
           <div class="section-title">
             <div>
               <p class="eyebrow">${highlightTitle}</p>
@@ -146,7 +159,7 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
           ${athleteEmptyPlaceholder}
         </div>
 
-        <div class="tab-panel" data-tab-panel="stats">
+        <div class="tab-panel" data-tab-panel="${SportTab.STATS}">
           <div class="section-title">
             <div>
               <p class="eyebrow">Comparaison</p>
@@ -156,7 +169,7 @@ export function renderSportPage(dataset: Dataset, sportId: number): string {
           ${comparisonMarkup}
         </div>
 
-        <div class="tab-panel" data-tab-panel="upcoming">
+        <div class="tab-panel" data-tab-panel="${SportTab.UPCOMING}">
           <div class="section-title">
             <div>
               <p class="eyebrow">À venir</p>
@@ -260,14 +273,14 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
 
     // The radar chart is initialised while the stats panel is hidden (0 height),
     // so ECharts must be resized once the panel becomes visible.
-    if (tabName === "stats") {
+    if (tabName === SportTab.STATS) {
       currentChart?.resize();
     }
   };
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      setActiveTab(button.dataset.tab ?? "history");
+      setActiveTab(button.dataset.tab ?? SportTab.HISTORY);
     });
   });
 
@@ -339,7 +352,7 @@ export function initSportPage(root: HTMLElement, dataset: Dataset, sportId: numb
       return;
     }
 
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const isLight = document.documentElement.getAttribute('data-theme') === Theme.LIGHT;
     const legendColor = isLight ? '#334155' : '#e2e8f0';
     const axisNameColor = isLight ? '#475569' : '#cbd5e1';
     const splitAreaColors = isLight

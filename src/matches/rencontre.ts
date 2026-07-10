@@ -1,11 +1,17 @@
-export enum RencontreStatus {
-  FINISHED = "finished",
-}
+import type { ObjectValues } from "../platform/types.js";
 
-export enum RencontreType {
-  MATCH = "match",
-  COMBAT = "combat",
-}
+export const RencontreStatus = {
+  FINISHED: "finished",
+} as const;
+
+export type RencontreStatus = ObjectValues<typeof RencontreStatus>;
+
+export const RencontreType = {
+  MATCH: "match",
+  COMBAT: "combat",
+} as const;
+
+export type RencontreType = ObjectValues<typeof RencontreType>;
 
 export type Scorer = {
   athlete_id: number;
@@ -27,7 +33,7 @@ export type BaseRencontre = {
 };
 
 export type MatchRencontre = BaseRencontre & {
-  type: RencontreType.MATCH;
+  type: typeof RencontreType.MATCH;
   home_team_id: number;
   away_team_id: number;
   home_score: number;
@@ -42,7 +48,7 @@ export type MatchRencontre = BaseRencontre & {
 };
 
 export type CombatRencontre = BaseRencontre & {
-  type: RencontreType.COMBAT;
+  type: typeof RencontreType.COMBAT;
   card_position: string;
   fighter1_id: number;
   fighter2_id: number;

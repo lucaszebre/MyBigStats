@@ -1,7 +1,11 @@
-export enum SportType {
-  TEAM = "team",
-  INDIVIDUAL = "individual",
-}
+import type { ObjectValues } from "../platform/types.js";
+
+export const SportType = {
+  TEAM: "team",
+  INDIVIDUAL: "individual",
+} as const;
+
+export type SportType = ObjectValues<typeof SportType>;
 
 export type CompetitionBase = {
   name: string;
