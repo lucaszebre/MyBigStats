@@ -1,7 +1,14 @@
 import type { Dataset } from "../platform/data-store.js";
+import type { Theme } from "../platform/preferences.js";
+import { getTheme, toggleTheme } from "../platform/preferences.js";
 import { renderHomePage } from "../home/home-page.js";
 import { renderSportPage, initSportPage } from "../sports/sport-page.js";
 import { escapeHtml } from "../platform/html.js";
+import { wireFavorites } from "./favorites.js";
+
+function getThemeToggleLabel(theme: Theme): string {
+  return theme === "dark" ? "☀️ Mode clair" : "🌙 Mode sombre";
+}
 
 function resolveRouteFromHash(hash = window.location.hash): { view: "home" } | { view: "sport"; sportId: number } {
   const cleanHash = hash.startsWith("#") ? hash.slice(1) : hash;
@@ -39,7 +46,10 @@ export function renderApp(root: HTMLElement, dataset: Dataset): void {
   root.innerHTML = `
     <div class="shell">
       <header class="hero">
-        <p class="eyebrow">MyBigStats</p>
+        <div class="hero-top">
+          <p class="eyebrow">MyBigStats</p>
+          <button type="button" class="theme-toggle" data-theme-toggle>${getThemeToggleLabel(getTheme())}</button>
+        </div>
         <h1>Suivez les sports, les athlètes et les rencontres</h1>
         <p>Récupérez les données depuis l’API et découvrez les événements à venir, les équipes et les comparaisons d’athlètes.</p>
         <nav class="nav" aria-label="Navigation principale">
@@ -66,6 +76,14 @@ export function renderApp(root: HTMLElement, dataset: Dataset): void {
       }
     });
   });
+
+  const themeToggle = root.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  themeToggle?.addEventListener("click", () => {
+    const next = toggleTheme();
+    themeToggle.textContent = getThemeToggleLabel(next);
+  });
+
+  wireFavorites(root, dataset);
 
   if (route.view === "sport" && route.sportId !== undefined) {
     initSportPage(root, dataset, route.sportId);
