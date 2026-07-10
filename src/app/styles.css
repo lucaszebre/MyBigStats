@@ -518,7 +518,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* Panels to occupy more horizontal space for better visual balance */
 .team-panel,
 .events-panel {
   max-width: 1100px;

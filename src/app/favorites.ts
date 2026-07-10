@@ -4,11 +4,6 @@ import { renderAthleteCard } from "../athletes/athlete-card.js";
 
 const WIRED_FLAG = "favoritesWired";
 
-/**
- * Renders the inner markup of the "favourites" section from the persisted store.
- * Kept separate from wiring so it can be re-rendered in place when a favourite
- * is toggled without rebuilding the whole page.
- */
 export function renderFavoritesList(dataset: Dataset): string {
   const favorites = getFavorites();
   const athletes = dataset.athletes.filter((athlete) => favorites.has(athlete.id));
@@ -20,11 +15,6 @@ export function renderFavoritesList(dataset: Dataset): string {
   return `<div class="sport-grid">${athletes.map((athlete) => renderAthleteCard(athlete, dataset)).join("")}</div>`;
 }
 
-/**
- * Attaches a single delegated click handler on the app root so favourite toggles
- * keep working after each re-render. Guarded so repeated renders don't stack
- * duplicate listeners on the persistent root element.
- */
 export function wireFavorites(root: HTMLElement, dataset: Dataset): void {
   if (root.dataset[WIRED_FLAG] === "true") {
     return;
@@ -38,7 +28,6 @@ export function wireFavorites(root: HTMLElement, dataset: Dataset): void {
       return;
     }
 
-    // The star lives inside a <summary>; stop the accordion from toggling.
     event.preventDefault();
     event.stopPropagation();
 

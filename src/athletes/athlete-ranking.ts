@@ -10,9 +10,6 @@ export type RankedAthlete = {
   metricValue: number;
 };
 
-/**
- * Picks the headline stat used to rank an athlete, per sport family.
- */
 function getPrimaryMetric(athlete: Athlete): { label: string; value: number } {
   if ("goals" in athlete.stats) {
     return { label: "Buts", value: athlete.stats.goals };
@@ -29,11 +26,6 @@ function getPrimaryMetric(athlete: Athlete): { label: string; value: number } {
   return { label: "Score", value: 0 };
 }
 
-/**
- * Ranks athletes across every sport. Raw stats aren't comparable between sports,
- * so each athlete's headline stat is normalised (0-100) against the best value
- * in their own sport before sorting globally.
- */
 export function getTopAthletes(dataset: Dataset, limit = 5): RankedAthlete[] {
   const maxBySport = new Map<number, number>();
   for (const athlete of dataset.athletes) {

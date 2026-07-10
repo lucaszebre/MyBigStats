@@ -1,4 +1,5 @@
 import type { Sport } from "./sport.js";
+import { SportType } from "./sport.js";
 import type { Dataset } from "../platform/data-store.js";
 import { getTodayString } from "../platform/format.js";
 import { escapeHtml } from "../platform/html.js";
@@ -14,7 +15,7 @@ export function renderSportCard(sport: Sport, dataset: Dataset): string {
     <article class="card sport-card">
       <div class="card-header sport-card-header">
         <div class="card-title-block">
-          <p class="eyebrow">${sport.type === "team" ? "Équipe" : "Individuel"}</p>
+          <p class="eyebrow">${sport.type === SportType.TEAM ? "Équipe" : "Individuel"}</p>
           <h3>${escapeHtml(sport.name)}</h3>
         </div>
       </div>

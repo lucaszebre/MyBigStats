@@ -1,4 +1,5 @@
 import type { Rencontre } from "./rencontre.js";
+import { RencontreType, RencontreStatus } from "./rencontre.js";
 import type { Dataset } from "../platform/data-store.js";
 import { formatDate } from "../platform/format.js";
 import { escapeHtml } from "../platform/html.js";
@@ -24,7 +25,7 @@ export function renderRencontreCard(rencontre: Rencontre, dataset: Dataset): str
 }
 
 function getRencontreTitle(rencontre: Rencontre, dataset: Dataset): string {
-  if (rencontre.type === "match") {
+  if (rencontre.type === RencontreType.MATCH) {
     const home = dataset.equipesById.get(rencontre.home_team_id)?.name ?? "Équipe locale";
     const away = dataset.equipesById.get(rencontre.away_team_id)?.name ?? "Équipe visiteuse";
     return `${home} vs ${away}`;
@@ -36,8 +37,8 @@ function getRencontreTitle(rencontre: Rencontre, dataset: Dataset): string {
 }
 
 function getRencontreSubtitle(rencontre: Rencontre, dataset: Dataset): string {
-  if (rencontre.type === "match") {
-    return rencontre.status === "finished"
+  if (rencontre.type === RencontreType.MATCH) {
+    return rencontre.status === RencontreStatus.FINISHED
       ? `${rencontre.home_score} - ${rencontre.away_score} · ${rencontre.venue}`
       : `Lieu : ${rencontre.venue}`;
   }
